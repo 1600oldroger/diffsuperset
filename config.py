@@ -20,7 +20,9 @@ from superset.stats_logger import DummyStatsLogger
 STATS_LOGGER = DummyStatsLogger()
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-if 'SUPERSET_HOME' in os.environ:
+if 'SUPERSET_DATA_DIR' in os.environ:
+    DATA_DIR = os.environ['SUPERSET_DATA_DIR']
+elif 'SUPERSET_HOME' in os.environ:
     DATA_DIR = os.environ['SUPERSET_HOME']
 else:
     DATA_DIR = os.path.join(os.path.expanduser('~'), '.superset')
