@@ -1,6 +1,9 @@
 # pylint: disable=C,R,W
 from datetime import datetime
 import logging
+# Dremio ODBC driver:start 
+import re
+# Dremio ODBC driver:end
 
 from flask import escape, Markup
 from flask_appbuilder import Model
@@ -786,6 +789,17 @@ class SqlaTable(Model, BaseDatasource):
         status = utils.QueryStatus.SUCCESS
         error_message = None
         df = None
+        
+        # Dremio ODBC driver:start
+        try:
+            trv = re.findall(r'\[.*\]', sql)
+            for caso in trv:
+                caso = re.sub('\[|\]', '"', caso)
+                sql = re.sub('\[.*\]', caso, sql)
+        except:
+            pass
+        # Dremio ODBC driver: end
+
         try:
             df = self.database.get_df(sql, self.schema)
         except Exception as e:

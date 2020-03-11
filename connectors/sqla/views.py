@@ -18,6 +18,12 @@ from superset.views.base import (
 )
 from . import models
 
+# Note that some databases such as SQL Server don't allow an
+# EXISTS expression to be present in the columns clause of a
+# SELECT. To select a simple boolean value based on the exists
+# as a WHERE, use 'literal()' function from SQLAlchemy.
+from sqlalchemy import literal
+
 
 class TableColumnInlineView(CompactCRUDMixin, SupersetModelView):  # noqa
     datamodel = SQLAInterface(models.TableColumn)
@@ -247,7 +253,15 @@ class TableModelView(DatasourceModelView, DeleteMixin, YamlExportMixin):  # noqa
                 models.SqlaTable.table_name == table.table_name,
                 models.SqlaTable.schema == table.schema,
                 models.SqlaTable.database_id == table.database.id)
-            if db.session.query(table_query.exists()).scalar():
+            # 
+            # Note that some databases such as SQL Server don't allow an
+            # EXISTS expression to be present in the columns clause of a
+            # SELECT. To select a simple boolean value based on the exists
+            # as a WHERE, use 'literal' object from SQLAlchemy.
+            # Use the following if database supports SELECT EXISTS statement:
+            #     if db.session.query(table_query.exists()).scalar():
+            #
+            if db.session.query(literal(True)).filter(table_query.exists()).scalar():
                 raise Exception(
                     get_datasource_exist_error_msg(table.full_name))
 

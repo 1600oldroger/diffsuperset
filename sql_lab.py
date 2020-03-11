@@ -8,6 +8,11 @@ from celery.exceptions import SoftTimeLimitExceeded
 from contextlib2 import contextmanager
 import simplejson as json
 import sqlalchemy
+ 
+# Dremio ODBC driver:start
+import sqlalchemy_dremio.pyodbc
+# Dremio ODBC driver:end
+
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 

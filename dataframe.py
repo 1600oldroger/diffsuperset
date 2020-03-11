@@ -70,6 +70,13 @@ class SupersetDataFrame(object):
         self.column_names = dedup(column_names)
 
         data = data or []
+         
+        # Dremio ODBC driver:start
+        colcount = len(column_names)
+        rowcount = len(data)
+        data = np.reshape(data, (rowcount, colcount))
+        # Dremio ODBC driver:end
+
         self.df = (
             pd.DataFrame(list(data), columns=self.column_names).infer_objects())
 
